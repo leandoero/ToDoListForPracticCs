@@ -11,14 +11,35 @@
 using ToDoListForPracticC_.Services;
 using ToDoListForPracticC_.Models;
 using System;
+using ToDoListForPracticC_.EntityFramework;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 bool flag = true;
 var TaskService = new TaskService();
+ApplicationContext db = new ApplicationContext();
+int use = 0;
+do
+{
+    Console.Clear();
+    Console.WriteLine("1. Load data from databaseuse\n2. New data");
+    Console.Write("Input: ");
+    string input = Console.ReadLine();
+    if (!int.TryParse(input, out use))
+    {
+        continue;
+    }
+} while (use != 1 && use != 2);
+
+if(use == 1)
+{
+    TaskService.AddTasksFromBDtoList(db);
+}
+
 while (flag)
 {
     Console.Clear();
     Console.WriteLine("=== TODO list ===");
     Console.WriteLine();
-    string multiLine = "1. Add task\n2. Mark completed\n3. Delete task\n4. Print tasks\n5. Exit\n";
+    string multiLine = "1. Add task\n2. Mark completed\n3. Delete task\n4. Print tasks\n5. Add tasks to BD\n6. Exit\n";
     Console.WriteLine(multiLine);
     int choice;
 
@@ -28,7 +49,7 @@ while (flag)
     {   
         continue;
     }
-    if (choice < 1 || choice > 5)
+    if (choice < 1 || choice > 6)
     {
         continue;
     }
@@ -82,14 +103,16 @@ while (flag)
 
                 }
                 TaskService.removeTasks(taskID);
+                TaskService.ReassignIDs();
                 break;
             }
         case 4:
             {
                 TaskService.printTasks();
                 Console.WriteLine();
-                Console.Write("press something to continue");
                 Console.ReadKey();
+                Console.Write("press something to continue");
+                
                 string index;
                 if (TaskService.tasksIsCompleted())
                 {
@@ -108,9 +131,18 @@ while (flag)
             }
         case 5:
             {
+                db.RemoveRange(db.itemsDb);
+                db.SaveChanges();
+                TaskService.AddTasksToDB(db);
+                db.SaveChanges();
+                break;
+            }
+        case 6:
+            {
                 Console.Write("bye");
                 flag = false;
                 break;
+                
             }
     }
 }

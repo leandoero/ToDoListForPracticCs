@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 using ToDoListForPracticC_.Models;
+using ToDoListForPracticC_;
+using ToDoListForPracticC_.EntityFramework;
 
 namespace ToDoListForPracticC_.Services
 {
@@ -47,9 +49,10 @@ namespace ToDoListForPracticC_.Services
         }
         public void removeTasksCompleted()
         {
-            for (int i = 0; i < tasks.Count; i++)
+            int count = tasks.Count - 1;
+            for (int i = count; i >= 0; i--)
             {
-                if (tasks[i].IsCompleted)
+                if (tasks[i].IsCompleted == true)
                 {
                     tasks.Remove(tasks[i]);
                 }
@@ -91,6 +94,27 @@ namespace ToDoListForPracticC_.Services
                     string output = taskitem.printItem();
                     Console.WriteLine(output);
                 }
+            }
+            if (tasks.Count == 0)
+            {
+                Console.WriteLine("Empty");
+            }
+        }
+
+        public void AddTasksToDB(ApplicationContext db)
+        {
+            for (int i = 0; i < tasks.Count; i++)
+            {
+               db.itemsDb.Add(tasks[i]);
+            }
+        }
+
+        public void AddTasksFromBDtoList(ApplicationContext db)
+        {
+            var entities = db.itemsDb.ToList();
+            foreach (var entity in entities)
+            {
+                tasks.Add(entity);
             }
         }
     }

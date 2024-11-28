@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 //Эта папка содержит классы, описывающие данные. Например, класс TaskItem будет представлять задачу.
 namespace ToDoListForPracticC_.Models
 {
-    internal class TaskItem
+    public class TaskItem
     {
         private int _id;
         private string _name;
